@@ -18,13 +18,13 @@ namespace DDay.iCal.Serialization
 
         #region Private Fields
 
-        IDictionary<string, PropertyMapping> _PropertyMap = new Dictionary<string, PropertyMapping>();
+        private static IDictionary<string, PropertyMapping> _PropertyMap = new Dictionary<string, PropertyMapping>();
 
         #endregion
 
         #region Constructors
 
-        public DataTypeMapper()
+        static DataTypeMapper()
         {
             AddPropertyMapping("ACTION", typeof(AlarmAction), false);
             AddPropertyMapping("ATTACH", typeof(IAttachment), false);
@@ -69,7 +69,7 @@ namespace DDay.iCal.Serialization
 
         #region Event Handlers
 
-        protected Type ResolveStatusProperty(object context)
+        protected static Type ResolveStatusProperty(object context)
         {
             ICalendarObject obj = context as ICalendarObject;
             if (obj != null)
@@ -89,7 +89,7 @@ namespace DDay.iCal.Serialization
 
         #region IDefaultTypeMapper Members
 
-        public void AddPropertyMapping(string name, Type objectType, bool allowsMultipleValues)
+        private static void AddPropertyMapping(string name, Type objectType, bool allowsMultipleValues)
         {
             if (name != null && objectType != null)
             {
@@ -101,7 +101,7 @@ namespace DDay.iCal.Serialization
             }
         }
 
-        public void AddPropertyMapping(string name, TypeResolverDelegate resolver, bool allowsMultipleValues)
+        private static void AddPropertyMapping(string name, TypeResolverDelegate resolver, bool allowsMultipleValues)
         {
             if (name != null && resolver != null)
             {
@@ -111,13 +111,6 @@ namespace DDay.iCal.Serialization
 
                 _PropertyMap[name.ToUpper()] = m;
             }
-        }
-
-        public void RemovePropertyMapping(string name)
-        {
-            if (name != null &&
-                _PropertyMap.ContainsKey(name.ToUpper()))
-                _PropertyMap.Remove(name.ToUpper());
         }
 
         virtual public bool GetPropertyAllowsMultipleValues(object obj)
