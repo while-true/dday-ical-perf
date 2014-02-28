@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
@@ -33,32 +34,58 @@ namespace DDay.iCal
 
         #region Static Private Methods
 
+        private static ConcurrentDictionary<Type, List<MethodInfo>> DeserializingMethods = new ConcurrentDictionary<Type, List<MethodInfo>>();
+
         static private IEnumerable<MethodInfo> GetDeserializingMethods(Type targetType)
         {
             if (targetType != null)
             {
+                List<MethodInfo> methods;
+                if (DeserializingMethods.TryGetValue(targetType, out methods)) return methods;
+                methods = new List<MethodInfo>();
+
                 // FIXME: cache this
                 foreach (MethodInfo mi in targetType.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
                 {
-                    object[] attrs = mi.GetCustomAttributes(typeof(OnDeserializingAttribute), false);
-                    if (attrs != null && attrs.Length > 0)
-                        yield return mi;
+                    object[] attrs = mi.GetCustomAttributes(typeof (OnDeserializingAttribute), false);
+                    if (attrs.Length > 0)
+                    {
+                        methods.Add(mi);
+                    }
                 }
+
+                DeserializingMethods.TryAdd(targetType, methods);
+                return methods;
             }
+
+            return new List<MethodInfo>();
         }
+
+        private static ConcurrentDictionary<Type, List<MethodInfo>> DeserializedMethods = new ConcurrentDictionary<Type, List<MethodInfo>>();
 
         static private IEnumerable<MethodInfo> GetDeserializedMethods(Type targetType)
         {
             if (targetType != null)
             {
+                List<MethodInfo> methods;
+                if (DeserializedMethods.TryGetValue(targetType, out methods)) return methods;
+                methods = new List<MethodInfo>();
+
                 // FIXME: cache this
                 foreach (MethodInfo mi in targetType.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
                 {
                     object[] attrs = mi.GetCustomAttributes(typeof(OnDeserializedAttribute), true);
-                    if (attrs != null && attrs.Length > 0)
-                        yield return mi;
+                    if (attrs.Length > 0)
+                    {
+                        methods.Add(mi);
+                    }
                 }
+
+                DeserializedMethods.TryAdd(targetType, methods);
+                return methods;
             }
+
+            return new List<MethodInfo>();
         } 
 
         #endregion
