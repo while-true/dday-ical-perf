@@ -1032,7 +1032,7 @@ namespace DDay.iCal
 
         #region Overrides
 
-        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+        public override IEnumerable<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // Create a recurrence pattern suitable for use during evaluation.
             IRecurrencePattern pattern = ProcessRecurrencePattern(referenceDate);
@@ -1040,20 +1040,26 @@ namespace DDay.iCal
             // Enforce evaluation restrictions on the pattern.
             EnforceEvaluationRestrictions(pattern);
 
-            SortedList<IPeriod , IPeriod> periods = new SortedList<IPeriod, IPeriod>();
+            var periods = new HashSet<IPeriod>();
             foreach (DateTime dt in GetDates(referenceDate, periodStart, periodEnd, -1, pattern, includeReferenceDateInResults))
             {                
                 // Create a period from the date/time.
                 IPeriod p = CreatePeriod(dt, referenceDate);
 
-                if (!periods.ContainsKey(p))
-                    periods.Add(p,p);
+                if (!periods.Contains(p))
+                    periods.Add(p);
             }
 
 
             Periods.Clear();
 
-            Periods.AddRange(periods.Values);
+            foreach (var period in periods)
+            {
+                if (!Periods.Contains(period))
+                {
+                    Periods.Add(period);
+                }
+            }
 
             return Periods;
         }

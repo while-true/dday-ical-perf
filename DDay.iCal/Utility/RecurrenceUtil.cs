@@ -38,7 +38,7 @@ namespace DDay.iCal
                 periodStart = DateUtil.MatchTimeZone(start, periodStart);
                 periodEnd = DateUtil.MatchTimeZone(start, periodEnd);
 
-                IList<IPeriod> periods = evaluator.Evaluate(
+                var periods = evaluator.Evaluate(
                     start,
                     DateUtil.GetSimpleDateTimeData(periodStart),
                     DateUtil.GetSimpleDateTimeData(periodEnd),

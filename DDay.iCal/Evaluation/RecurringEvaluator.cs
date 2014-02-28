@@ -62,8 +62,8 @@ namespace DDay.iCal
                     IEvaluator evaluator = rrule.GetService(typeof(IEvaluator)) as IEvaluator;
                     if (evaluator != null)
                     {
-                        IList<IPeriod> periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
-                        foreach (IPeriod p in periods)
+                        var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
+                        foreach (var p in periods)
                         {
                             if (!Periods.Contains(p))
                                 Periods.Add(p);
@@ -97,7 +97,7 @@ namespace DDay.iCal
                     IEvaluator evaluator = rdate.GetService(typeof(IEvaluator)) as IEvaluator;
                     if (evaluator != null)
                     {
-                        IList<IPeriod> periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
+                        var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
                         foreach (IPeriod p in periods)
                         {
                             if (!Periods.Contains(p))
@@ -124,7 +124,7 @@ namespace DDay.iCal
                     IEvaluator evaluator = exrule.GetService(typeof(IEvaluator)) as IEvaluator;
                     if (evaluator != null)
                     {
-                        IList<IPeriod> periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
+                        var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
                         foreach (IPeriod p in periods)                        
                         {                            
                             if (this.Periods.Contains(p))
@@ -151,7 +151,7 @@ namespace DDay.iCal
                     IEvaluator evaluator = exdate.GetService(typeof(IEvaluator)) as IEvaluator;
                     if (evaluator != null)
                     {
-                        IList<IPeriod> periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
+                        var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
                         foreach (IPeriod p in periods)                        
                         {
                             // If no time was provided for the ExDate, then it excludes the entire day
@@ -170,7 +170,7 @@ namespace DDay.iCal
 
         #region Overrides
 
-        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+        public override IEnumerable<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // Evaluate extra time periods, without re-evaluating ones that were already evaluated
             if ((EvaluationStartBounds == DateTime.MaxValue && EvaluationEndBounds == DateTime.MinValue) ||
@@ -195,7 +195,7 @@ namespace DDay.iCal
             }
 
             // Sort the list
-            m_Periods.Sort();
+            //m_Periods.Sort();
 
             return Periods;
         }

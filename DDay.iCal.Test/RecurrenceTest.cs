@@ -2610,7 +2610,7 @@ namespace DDay.iCal.Test
                 RecurrencePatternSerializer serializer = new RecurrencePatternSerializer();
                 RecurrencePattern rp = (RecurrencePattern)serializer.Deserialize(sr);
                 RecurrencePatternEvaluator rpe = new RecurrencePatternEvaluator(rp);
-                IList<IPeriod> recurringPeriods = rpe.Evaluate(new iCalDateTime(start), start, rp.Until, false);
+                var recurringPeriods = rpe.Evaluate(new iCalDateTime(start), start, rp.Until, false);
                 
                 IPeriod period = recurringPeriods.ElementAt(recurringPeriods.Count() - 1);
 
@@ -3067,11 +3067,11 @@ namespace DDay.iCal.Test
             IEvaluator evaluator = pattern.GetService(typeof(IEvaluator)) as IEvaluator;
             Assert.IsNotNull(evaluator);
 
-            IList<IPeriod> occurrences = evaluator.Evaluate(
+            var occurrences = evaluator.Evaluate(
                 startDate, 
                 DateUtil.SimpleDateTimeToMatch(fromDate, startDate), 
                 DateUtil.SimpleDateTimeToMatch(toDate, startDate),
-                false);
+                false).OrderBy(x => x).ToList();
             Assert.AreEqual(4, occurrences.Count);
             Assert.AreEqual(new iCalDateTime(DateTime.Parse("03/30/08 11:59:40 PM", us)), occurrences[0].StartTime);
             Assert.AreEqual(new iCalDateTime(DateTime.Parse("03/30/08 11:59:50 PM", us)), occurrences[1].StartTime);
@@ -3095,12 +3095,12 @@ namespace DDay.iCal.Test
             IEvaluator evaluator = pattern.GetService(typeof(IEvaluator)) as IEvaluator;
             Assert.IsNotNull(evaluator);
 
-            IList<IPeriod> occurrences = evaluator.Evaluate(
+            var occurrences = evaluator.Evaluate(
                 startDate, 
                 DateUtil.SimpleDateTimeToMatch(fromDate, startDate), 
                 DateUtil.SimpleDateTimeToMatch(toDate, startDate),
                 false);
-            Assert.AreNotEqual(0, occurrences.Count);
+            Assert.AreNotEqual(0, occurrences.ToList().Count);
         }
 
         [Test, Category("Recurrence")]
@@ -3227,11 +3227,11 @@ namespace DDay.iCal.Test
             Assert.IsNotNull(evaluator);
 
             // Add the exception dates
-            IList<IPeriod> periods = evaluator.Evaluate(
+            var periods = evaluator.Evaluate(
                 evtStart,
                 DateUtil.GetSimpleDateTimeData(evtStart), 
                 DateUtil.SimpleDateTimeToMatch(evtEnd, evtStart),
-                false);
+                false).OrderBy(x => x).ToList();
             Assert.AreEqual(10, periods.Count);
             Assert.AreEqual(2, periods[0].StartTime.Day);
             Assert.AreEqual(3, periods[1].StartTime.Day);

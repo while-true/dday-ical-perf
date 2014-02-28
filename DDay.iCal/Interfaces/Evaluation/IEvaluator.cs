@@ -30,7 +30,7 @@ namespace DDay.iCal
         /// Gets a list of periods collected so far during
         /// the evaluation process.
         /// </summary>
-        IList<IPeriod> Periods { get; }
+        HashSet<IPeriod> Periods { get; }
 
         /// <summary>
         /// Gets the object associated with this evaluator.
@@ -67,6 +67,6 @@ namespace DDay.iCal
         ///     A list of <see cref="System.DateTime"/> objects for
         ///     each date/time when this item occurs/recurs.
         /// </returns>
-        IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults);
+        IEnumerable<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults);
     }
 }

@@ -28,14 +28,14 @@ namespace DDay.iCal
  
         #region Overrides
 
-        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+        public override IEnumerable<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // Time zones must include an effective start date/time
             // and must provide an evaluator.
             if (TimeZoneInfo != null)
             {
                 // Always include the reference date in the results
-                IList<IPeriod> periods = base.Evaluate(referenceDate, periodStart, periodEnd, true);
+                var periods = base.Evaluate(referenceDate, periodStart, periodEnd, true);
                 return periods;
             }
 

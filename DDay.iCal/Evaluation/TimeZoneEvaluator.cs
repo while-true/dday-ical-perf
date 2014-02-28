@@ -77,7 +77,7 @@ namespace DDay.iCal
             m_Occurrences.Clear();
         }
 
-        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+        public override IEnumerable<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // Ensure the reference date is associated with the time zone
             if (referenceDate.AssociatedObject == null)
@@ -116,7 +116,7 @@ namespace DDay.iCal
                             tziReferenceDate = curr.Start;
 
                         // Determine the UTC occurrences of the Time Zone observances
-                        IList<IPeriod> periods = evaluator.Evaluate(
+                        var periods = evaluator.Evaluate(
                             tziReferenceDate,
                             periodStart,
                             offsetEnd,
