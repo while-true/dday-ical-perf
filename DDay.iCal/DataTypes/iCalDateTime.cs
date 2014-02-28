@@ -348,6 +348,8 @@ namespace DDay.iCal
             }
         }
 
+        private DateTime? _utc;
+
         /// <summary>
         /// Converts the date/time to UTC (Coordinated Universal Time)
         /// </summary>
@@ -355,26 +357,38 @@ namespace DDay.iCal
         {
             get
             {
+                if (_utc != null) return _utc.Value;
+
+                DateTime? ret = null;
+
                 if (IsUniversalTime)
-                    return DateTime.SpecifyKind(Value, DateTimeKind.Utc);
+                    //return DateTime.SpecifyKind(Value, DateTimeKind.Utc);
+                    ret = DateTime.SpecifyKind(Value, DateTimeKind.Utc);
                 else if (TZID != null)
                 {
                     DateTime value = Value;
 
                     // Get the Time Zone Observance, if possible
                     TimeZoneObservance? tzi = TimeZoneObservance;
-                    if (tzi == null || !tzi.HasValue)
+                    if (tzi == null)
                         tzi = GetTimeZoneObservance();
 
-                    if (tzi != null && tzi.HasValue)
+                    if (tzi != null)
                     {
                         Debug.Assert(tzi.Value.TimeZoneInfo.OffsetTo != null);
-                        return DateTime.SpecifyKind(tzi.Value.TimeZoneInfo.OffsetTo.ToUTC(value), DateTimeKind.Utc);
+                        //return DateTime.SpecifyKind(tzi.Value.TimeZoneInfo.OffsetTo.ToUTC(value), DateTimeKind.Utc);
+                        ret = DateTime.SpecifyKind(tzi.Value.TimeZoneInfo.OffsetTo.ToUTC(value), DateTimeKind.Utc);
                     }
                 }
 
-                // Fallback to the OS-conversion
-                return DateTime.SpecifyKind(Value, DateTimeKind.Local).ToUniversalTime();
+                if (ret == null)
+                {
+                    // Fallback to the OS-conversion
+                    ret = DateTime.SpecifyKind(Value, DateTimeKind.Local).ToUniversalTime();
+                }
+
+                _utc = ret;
+                return ret.Value;
             }
         }
 
@@ -437,6 +451,8 @@ namespace DDay.iCal
                         _TimeZoneObservance.HasValue &&
                         !_TimeZoneObservance.Value.Contains(this))
                         _TimeZoneObservance = null;
+
+                    _utc = null;
                 }
 
             }
