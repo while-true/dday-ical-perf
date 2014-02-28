@@ -86,6 +86,9 @@ namespace DDay.iCal
             }
         }
 
+        private bool _timeZoneNameSet;
+        private string _timeZoneName;
+
         /// <summary>
         /// Returns the name of the current Time Zone.
         /// <example>
@@ -102,14 +105,24 @@ namespace DDay.iCal
         {
             get
             {
-                if (TimeZoneNames.Count > 0)
-                    return TimeZoneNames[0];
-                return null;
+                if (_timeZoneNameSet) return _timeZoneName;
+
+                var names = TimeZoneNames;
+                if (names.Count > 0)
+                {
+                    _timeZoneName = names[0];
+                    _timeZoneNameSet = true;
+                }
+
+                return _timeZoneName;
             }
             set
             {
                 TimeZoneNames.Clear();
                 TimeZoneNames.Add(value);
+
+                _timeZoneName = null;
+                _timeZoneNameSet = false;
             }
         }
 
