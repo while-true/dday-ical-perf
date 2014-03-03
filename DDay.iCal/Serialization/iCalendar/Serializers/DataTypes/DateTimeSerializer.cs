@@ -17,6 +17,9 @@ namespace DDay.iCal.Serialization.iCalendar
         private const string dateOnlyPattern = @"^((\d{4})(\d{2})(\d{2}))?$";
         private const string fullPattern = @"^((\d{4})(\d{2})(\d{2}))T((\d{2})(\d{2})(\d{2})(Z)?)$";
 
+        private static readonly Regex dateOnlyPatternRegex = new Regex(dateOnlyPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex fullPatternRegex = new Regex(fullPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
         #endregion
 
         #region Private Methods
@@ -103,9 +106,11 @@ namespace DDay.iCal.Serialization.iCalendar
                 // Decode the value as necessary
                 value = Decode(dt, value);
 
-                Match match = Regex.Match(value, fullPattern, RegexOptions.IgnoreCase);
+                var match = fullPatternRegex.Match(value);
                 if (!match.Success)
-                    match = Regex.Match(value, dateOnlyPattern, RegexOptions.IgnoreCase);
+                {
+                    match = dateOnlyPatternRegex.Match(value);
+                }
 
                 if (!match.Success)
                     return null;
