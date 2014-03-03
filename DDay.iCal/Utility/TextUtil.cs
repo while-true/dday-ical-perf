@@ -51,13 +51,15 @@ namespace DDay.iCal
             return s;
         }
 
+        private static Regex NormalizeRegex = new Regex(@"((\r(?=[^\n]))|((?<=[^\r])\n))", RegexOptions.Compiled);
+
         /// <summary>
         /// Normalizes line endings, converting "\r" into "\r\n" and "\n" into "\r\n".        
         /// </summary>
         public static TextReader Normalize(string s, ISerializationContext ctx)
         {
             // Replace \r and \n with \r\n.
-            s = Regex.Replace(s, @"((\r(?=[^\n]))|((?<=[^\r])\n))", "\r\n");
+            s = NormalizeRegex.Replace(s, "\r\n");
 
             ISerializationSettings settings = ctx.GetService(typeof(ISerializationSettings)) as ISerializationSettings;
             if (settings == null || !settings.EnsureAccurateLineNumbers)
