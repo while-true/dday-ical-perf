@@ -23,10 +23,12 @@ namespace DDay.iCal.Serialization
         {
             get
             {
-                if (_Default == null)
-                {
-                    _Default = new SerializationContext();
-                }
+                if (_Default != null) return _Default;
+
+                _Default = new SerializationContext();
+                return _Default;
+
+                // WTF?!
 
                 // Create a new serialization context that doesn't contain any objects
                 // (and is non-static).  That way, if any objects get pushed onto
